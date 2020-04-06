@@ -44,7 +44,7 @@ class RC4(object):
         #initialization is done at this point. we don't need the key or k anymore.
 
     
-    def get_next(self):
+    def _get_next(self):
 
         if not self._s_initialized : self._initialize() 
 
@@ -58,6 +58,23 @@ class RC4(object):
         self._swap(self._i, self._j)  
         
         return result 
+
+    def encrypt(self, message):
+
+        assert isinstance(message, str), 'message should be string'
+
+        self._i = 0
+        self._j = 0
+
+        encrypted_message = ""
+
+        for i in range(len(message)):
+            k = self._get_next() 
+            m = ord(message[i]) 
+            t = k ^ m
+            encrypted_message += chr(t)
+        
+        return encrypted_message 
 
 
 
@@ -112,11 +129,5 @@ def rc4(key):
 
 rc = RC4("hello") 
 
-l = []
-for i in range(500): 
-    n = rc.get_next() 
-    if l.count(n) > 4:
-        print(n)
-    l.append(n) 
+e = rc.encrypt("funny") 
 
-print("len:", len(l))
